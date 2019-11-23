@@ -12,7 +12,7 @@ view model =
     div [ class "jumbotron" ]
         [ h1 [] [ text "4HC3 FALL 2019" ]
         , p []
-            [ text "test "
+            [ text "Group 5 "
              
             ]
         ]
