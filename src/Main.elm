@@ -7,7 +7,6 @@ import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 
 
-
 view model =
     div [ class "jumbotron" ]
         [ h1 [] [ text "4HC3 FALL 2019" ]
