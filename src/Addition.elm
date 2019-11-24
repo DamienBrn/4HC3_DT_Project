@@ -5,7 +5,7 @@ import Css exposing (..)
 import Html
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, src)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled.Events exposing (onClick, onInput)
 
 -- MAIN
 
@@ -18,12 +18,25 @@ main =
 -- MODEL
 
 
-type alias Model = Int
+type alias Model = { 
+     answ1 : String, 
+     answ2 : String, 
+     answ3 : String,
+     a1ValidatedCode : Int,
+     a2ValidatedCode : Int,
+     a3ValidatedCode : Int }
 
 
 init : Model
 init =
-  0
+  {
+       answ1 = "-999",
+       answ2 = "-999",
+       answ3 = "-999",
+       a1ValidatedCode = 0,
+       a2ValidatedCode = 0,
+       a3ValidatedCode = 0
+  }
 
 
 
@@ -31,20 +44,66 @@ init =
 
 
 type Msg
-  = Increment
-  | Decrement
+  = ModifyAnsw1 String
+  | ModifyAnsw2 String
+  | ModifyAnsw3 String
+  | UpdateValidatedCode Int Int Int
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Increment ->
-      model + 1
+     ModifyAnsw1 val ->
+          { model | answ1 = val }
+     ModifyAnsw2 val ->
+          { model | answ2 = val }
+     ModifyAnsw3 val ->
+          { model | answ3 = val }
+     UpdateValidatedCode c1 c2 c3 ->
+          { model | a1ValidatedCode = c1, a2ValidatedCode = c2, a3ValidatedCode = c3 }
 
-    Decrement ->
-      model - 1
 
 
+-- Support Functions
+getA1ValidatedCode model =
+     if model.answ1 == "4" then
+          1
+     else if model.answ1 == "" then
+          0
+     else
+          2
+
+getA2ValidatedCode model =
+     if model.answ2 == "11" then
+          1
+     else if model.answ2 == "" then
+          0
+     else
+          2
+
+getA3ValidatedCode model =
+     if model.answ3 == "17" then
+          1
+     else if model.answ3 == "" then
+          0
+     else
+          2
+
+validateAnsws model =
+     let
+          a1ValidatedCode = getA1ValidatedCode model
+          a2ValidatedCode = getA2ValidatedCode model
+          a3ValidatedCode = getA3ValidatedCode model
+     in
+          UpdateValidatedCode a1ValidatedCode a2ValidatedCode a3ValidatedCode
+
+getValidateImg validator =
+     if validator == 1 then
+          "assest/success.png"
+     else if validator == 0 then
+          ""
+     else
+          "assest/error.png"
 
 -- VIEW
 
@@ -71,21 +130,24 @@ view model =
                -- addition part 1
                div [ css mainSectionAdditionContainerStyle ] [
                     span [] [text "3 + 1 = "],
-                    input [] []
+                    input [ onInput ModifyAnsw1 ] [],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a1ValidatedCode |> src ] []
                ],
                -- addition part 2
                div [ css mainSectionAdditionContainerStyle ] [
                     span [] [text "6 + 5 = "],
-                    input [] []
+                    input [ onInput ModifyAnsw2 ] [],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a2ValidatedCode |> src ] []
                ],
                -- addition part 3
                div [ css mainSectionAdditionContainerStyle ] [
                     span [] [text "9 + 8 = "],
-                    input [] []
+                    input [ onInput ModifyAnsw3 ] [],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a3ValidatedCode |> src ] []
                ],
                -- click to verify button
                div [ css mainSectionVerifyButtonContainerStyle ] [
-                    button [css mainSectionVerifyButtonStyle] [
+                    button [ css mainSectionVerifyButtonStyle, onClick (validateAnsws model) ] [
                          div [] [
                               div [ css verifyButtonTextContainerStyle ] [ text "Click here to verify if your answers are correct" ],
                               img [ src "assest/check.png", css verifyButtonCheckIconStyle ] []
@@ -265,4 +327,11 @@ goToNextSectionButtonCheckIconStyle =
           display inlineBlock,
           verticalAlign top,
           marginLeft (px 5)
+     ]
+
+mainSectionAdditionFB = 
+     [
+          position absolute,
+          marginLeft (px 5),
+          width (px 30)
      ]
