@@ -1,4 +1,4 @@
-module Addition exposing (..)
+module Multiplication exposing (..)
 
 import Browser
 import Css exposing (..)
@@ -61,26 +61,26 @@ view model =
           ],
           -- section spliter
           div [ css sectionSpliterStyle ] [
-               img [ src "assest/addition.png", css sectionSpliterIconStyle ] [],
-               div [ css sectionSpliterTextContainerStyle ] [text "Additions"]
+               img [ src "assest/multiplication.png", css sectionSpliterIconStyle ] [],
+               div [ css sectionSpliterTextContainerStyle ] [text "Multiplications"]
           ],
           -- main addition section
           div [ css mainSectionStyle ] [
                -- title
-               div [ css mainSectionTitleStyle ] [text "Type your answer into the box next to each addition"],
+               div [ css mainSectionTitleStyle ] [text "Type your answer into the box next to each multiplication"],
                -- addition part 1
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "3 + 1 = "],
+                    span [] [text "1 * 6 = "],
                     input [] []
                ],
                -- addition part 2
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "6 + 5 = "],
+                    span [] [text "2 * 2 = "],
                     input [] []
                ],
                -- addition part 3
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "9 + 8 = "],
+                    span [] [text "5 * 4 = "],
                     input [] []
                ],
                -- click to verify button
@@ -94,7 +94,7 @@ view model =
                ],
                -- number of exercies
                div [ css mainSectionNumberOfExeContainerStyle ] [
-                    span [] [text "Exerciese 1/2"]
+                    span [] [text "Exerciese 2/2"]
                ],
                -- go to home page button
                div [ css mainSectionGoToHomeButtonContainerStyle ] [
@@ -108,8 +108,8 @@ view model =
                -- go to next exercies button
                button [ css mainSectionGoToNextExerciseButtonStyle ] [
                     div [] [
-                         div [ css goToNextSectionContainerStyle ] [ text "Go to next exercies" ],
-                         img [ src "assest/right-arrow.png", css goToNextSectionButtonCheckIconStyle ] []
+                         img [ src "assest/left-arrow.png", css goToNextSectionButtonCheckIconStyle ] [],
+                         div [ css goToNextSectionContainerStyle ] [ text "Go to next exercies" ]
                     ]
                ]
           ]
@@ -129,7 +129,7 @@ sectionSpliterStyle =
      [
           textAlign center,
           fontSize (px 30),
-          backgroundColor (rgb 252 0 249),
+          backgroundColor (rgb 112 152 249),
           padding (px 20),
           color (rgb 255 255 255)
      ]
@@ -177,7 +177,7 @@ mainSectionVerifyButtonStyle =
      [
           fontSize (px 15),
           border (px 0),
-          backgroundColor (rgb 252 0 249),
+          backgroundColor (rgb 112 152 249),
           padding (px 15),
           borderRadius (px 10),
           color (rgb 255 255 255)
@@ -247,14 +247,14 @@ mainSectionGoToNextExerciseButtonStyle =
           marginTop (px 15),
           color (rgb 255 255 255),
           position fixed,
-          right (px 50),
+          left (px 50),
           top (px 250)
      ]
 
 goToNextSectionContainerStyle = 
      [
           display inlineBlock,
-          marginRight (px 5),
+          marginLeft (px 5),
           height (px 18)
      ]
 
@@ -264,5 +264,5 @@ goToNextSectionButtonCheckIconStyle =
           height (px 18),
           display inlineBlock,
           verticalAlign top,
-          marginLeft (px 5)
+          marginRight (px 5)
      ]
