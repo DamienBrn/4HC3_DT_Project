@@ -5,7 +5,7 @@ import Css exposing (..)
 import Html
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, src)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled.Events exposing (onClick, onInput)
 
 -- MAIN
 
@@ -18,12 +18,27 @@ main =
 -- MODEL
 
 
-type alias Model = Int
+type alias Model = { 
+     selectedAnsw : Int,
+     answ1 : String, 
+     answ2 : String, 
+     answ3 : String,
+     a1ValidatedCode : Int,
+     a2ValidatedCode : Int,
+     a3ValidatedCode : Int }
 
 
 init : Model
 init =
-  0
+  {
+       selectedAnsw = 0,
+       answ1 = "",
+       answ2 = "",
+       answ3 = "",
+       a1ValidatedCode = 0,
+       a2ValidatedCode = 0,
+       a3ValidatedCode = 0
+  }
 
 
 
@@ -31,20 +46,93 @@ init =
 
 
 type Msg
-  = Increment
-  | Decrement
+  = ModifyAnsw1 String
+  | ModifyAnsw2 String
+  | ModifyAnsw3 String
+  | UpdateValidatedCode Int Int Int
+  | UpdateSelectedInput Int
+  | DoNothing
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Increment ->
-      model + 1
+     ModifyAnsw1 val ->
+          { model | answ1 = val }
+     ModifyAnsw2 val ->
+          { model | answ2 = val }
+     ModifyAnsw3 val ->
+          { model | answ3 = val }
+     UpdateValidatedCode c1 c2 c3 ->
+          { model | a1ValidatedCode = c1, a2ValidatedCode = c2, a3ValidatedCode = c3 }
+     UpdateSelectedInput numb ->
+          { model | selectedAnsw = numb }
+     DoNothing ->
+          model
 
-    Decrement ->
-      model - 1
 
+-- Support Functions
+getA1ValidatedCode model =
+     if model.answ1 == "4" then
+          1
+     else if model.answ1 == "" then
+          0
+     else
+          2
 
+getA2ValidatedCode model =
+     if model.answ2 == "11" then
+          1
+     else if model.answ2 == "" then
+          0
+     else
+          2
+
+getA3ValidatedCode model =
+     if model.answ3 == "17" then
+          1
+     else if model.answ3 == "" then
+          0
+     else
+          2
+
+validateAnsws model =
+     let
+          a1ValidatedCode = getA1ValidatedCode model
+          a2ValidatedCode = getA2ValidatedCode model
+          a3ValidatedCode = getA3ValidatedCode model
+     in
+          UpdateValidatedCode a1ValidatedCode a2ValidatedCode a3ValidatedCode
+
+getValidateImg validator =
+     if validator == 1 then
+          "assest/success.png"
+     else if validator == 0 then
+          ""
+     else
+          "assest/error.png"
+
+isInputSelected inputNumb model =
+     if inputNumb == model.selectedAnsw then
+          [ backgroundColor (rgb 46 204 113) ]
+     else
+          [ backgroundColor (rgb 252 0 249) ]
+
+handleUpComingVal income existing =
+     if income == "del" then
+          String.dropRight 1 existing
+     else
+          existing ++ income
+
+inputSelectedVal val model = 
+     if model.selectedAnsw == 1 then
+          (handleUpComingVal val model.answ1) |> ModifyAnsw1
+     else if model.selectedAnsw == 2 then
+          (handleUpComingVal val model.answ2) |> ModifyAnsw2
+     else if model.selectedAnsw == 3 then
+          (handleUpComingVal val model.answ3) |> ModifyAnsw3
+     else
+          DoNothing
 
 -- VIEW
 
@@ -70,22 +158,41 @@ view model =
                div [ css mainSectionTitleStyle ] [text "Type your answer into the box next to each addition"],
                -- addition part 1
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "3 + 1 = "],
-                    input [] []
+                    div [ css mainSectionQuestionText ] [text "3 + 1 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 1 model) |> css, onClick (UpdateSelectedInput 1) ] [ text model.answ1 ],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a1ValidatedCode |> src ] []
                ],
                -- addition part 2
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "6 + 5 = "],
-                    input [] []
+                    div [ css mainSectionQuestionText ] [text "6 + 5 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 2 model) |> css, onClick (UpdateSelectedInput 2) ] [ text model.answ2 ],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a2ValidatedCode |> src ] []
                ],
                -- addition part 3
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "9 + 8 = "],
-                    input [] []
+                    div [ css mainSectionQuestionText ] [text "9 + 8 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 3 model) |> css, onClick (UpdateSelectedInput 3) ] [ text model.answ3 ],
+                    img [ css mainSectionAdditionFB, getValidateImg model.a3ValidatedCode |> src ] []
+               ],
+               div [ css osKeyboardBtnContainer ] [
+                    div [ css osKeyboardBtnInstruction ] [ text "Input number by pressing buttons below"],
+                    ul [] [
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "0" model) ] [ text "0" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "1" model) ] [ text "1" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "2" model) ] [ text "2" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "3" model) ] [ text "3" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "4" model) ] [ text "4" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "5" model) ] [ text "5" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "6" model) ] [ text "6" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "7" model) ] [ text "7" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "8" model) ] [ text "8" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "9" model) ] [ text "9" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "del" model) ] [ text "←" ]
+                    ]
                ],
                -- click to verify button
                div [ css mainSectionVerifyButtonContainerStyle ] [
-                    button [css mainSectionVerifyButtonStyle] [
+                    button [ css mainSectionVerifyButtonStyle, onClick (validateAnsws model) ] [
                          div [] [
                               div [ css verifyButtonTextContainerStyle ] [ text "Click here to verify if your answers are correct" ],
                               img [ src "assest/check.png", css verifyButtonCheckIconStyle ] []
@@ -170,6 +277,7 @@ mainSectionAdditionContainerStyle =
 
 mainSectionVerifyButtonContainerStyle = 
      [
+          marginTop (px 30),
           textAlign center
      ]
 
@@ -265,4 +373,53 @@ goToNextSectionButtonCheckIconStyle =
           display inlineBlock,
           verticalAlign top,
           marginLeft (px 5)
+     ]
+
+mainSectionAdditionFB = 
+     [
+          position absolute,
+          marginLeft (px 5),
+          width (px 30)
+     ]
+
+osKeyboardBtnContainer =
+     [
+          textAlign center,
+          margin (px 25)
+     ]
+
+osKeyboardBtnInstruction =
+     [
+          fontSize (px 20),
+          margin auto
+     ]
+
+osKeyboardBtn = 
+     [
+          display inlineBlock,
+          padding (px 10),
+          fontSize (px 25),
+          color (rgb 255 255 255),
+          backgroundColor (rgb 252 0 249),
+          margin (px 5),
+          borderRadius (px 5),
+          cursor pointer
+     ]
+
+mainSectionInputContainer =
+     [
+          display inlineBlock,
+          width (px 200),
+          height (px 35),
+          borderRadius (px 10),
+          color (rgb 255 255 255),
+          cursor pointer
+     ]
+
+mainSectionQuestionText =
+     [
+          display inlineBlock,
+          height (px 35),
+          marginRight (px 10),
+          verticalAlign top
      ]
