@@ -19,6 +19,7 @@ main =
 
 
 type alias Model = { 
+     selectedAnsw : Int,
      answ1 : String, 
      answ2 : String, 
      answ3 : String,
@@ -30,9 +31,10 @@ type alias Model = {
 init : Model
 init =
   {
-       answ1 = "-999",
-       answ2 = "-999",
-       answ3 = "-999",
+       selectedAnsw = 0,
+       answ1 = "",
+       answ2 = "",
+       answ3 = "",
        a1ValidatedCode = 0,
        a2ValidatedCode = 0,
        a3ValidatedCode = 0
@@ -48,6 +50,8 @@ type Msg
   | ModifyAnsw2 String
   | ModifyAnsw3 String
   | UpdateValidatedCode Int Int Int
+  | UpdateSelectedInput Int
+  | DoNothing
 
 
 update : Msg -> Model -> Model
@@ -61,7 +65,10 @@ update msg model =
           { model | answ3 = val }
      UpdateValidatedCode c1 c2 c3 ->
           { model | a1ValidatedCode = c1, a2ValidatedCode = c2, a3ValidatedCode = c3 }
-
+     UpdateSelectedInput numb ->
+          { model | selectedAnsw = numb }
+     DoNothing ->
+          model
 
 
 -- Support Functions
@@ -105,6 +112,28 @@ getValidateImg validator =
      else
           "assest/error.png"
 
+isInputSelected inputNumb model =
+     if inputNumb == model.selectedAnsw then
+          [ backgroundColor (rgb 46 204 113) ]
+     else
+          [ backgroundColor (rgb 112 152 249) ]
+
+handleUpComingVal income existing =
+     if income == "del" then
+          String.dropRight 1 existing
+     else
+          existing ++ income
+
+inputSelectedVal val model = 
+     if model.selectedAnsw == 1 then
+          (handleUpComingVal val model.answ1) |> ModifyAnsw1
+     else if model.selectedAnsw == 2 then
+          (handleUpComingVal val model.answ2) |> ModifyAnsw2
+     else if model.selectedAnsw == 3 then
+          (handleUpComingVal val model.answ3) |> ModifyAnsw3
+     else
+          DoNothing
+
 -- VIEW
 
 
@@ -129,21 +158,37 @@ view model =
                div [ css mainSectionTitleStyle ] [text "Type your answer into the box next to each multiplication"],
                -- addition part 1
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "1 * 6 = "],
-                    input [ onInput ModifyAnsw1 ] [],
+                    div [ css mainSectionQuestionText ] [text "1 * 6 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 1 model) |> css, onClick (UpdateSelectedInput 1) ] [ text model.answ1 ],
                     img [ css mainSectionAdditionFB, getValidateImg model.a1ValidatedCode |> src ] []
                ],
                -- addition part 2
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "2 * 2 = "],
-                    input [ onInput ModifyAnsw2 ] [],
+                    div [ css mainSectionQuestionText ] [text "2 * 2 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 2 model) |> css, onClick (UpdateSelectedInput 2) ] [ text model.answ2 ],
                     img [ css mainSectionAdditionFB, getValidateImg model.a2ValidatedCode |> src ] []
                ],
                -- addition part 3
                div [ css mainSectionAdditionContainerStyle ] [
-                    span [] [text "5 * 4 = "],
-                    input [ onInput ModifyAnsw3 ] [],
+                    div [ css mainSectionQuestionText ] [text "5 * 4 = "],
+                    div [ css mainSectionInputContainer, (isInputSelected 3 model) |> css, onClick (UpdateSelectedInput 3) ] [ text model.answ3 ],
                     img [ css mainSectionAdditionFB, getValidateImg model.a3ValidatedCode |> src ] []
+               ],
+               div [ css osKeyboardBtnContainer ] [
+                    div [ css osKeyboardBtnInstruction ] [ text "Input number by pressing buttons below"],
+                    ul [] [
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "0" model) ] [ text "0" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "1" model) ] [ text "1" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "2" model) ] [ text "2" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "3" model) ] [ text "3" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "4" model) ] [ text "4" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "5" model) ] [ text "5" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "6" model) ] [ text "6" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "7" model) ] [ text "7" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "8" model) ] [ text "8" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "9" model) ] [ text "9" ],
+                         li [ css osKeyboardBtn, onClick (inputSelectedVal "del" model) ] [ text "←" ]
+                    ]
                ],
                -- click to verify button
                div [ css mainSectionVerifyButtonContainerStyle ] [
@@ -232,6 +277,7 @@ mainSectionAdditionContainerStyle =
 
 mainSectionVerifyButtonContainerStyle = 
      [
+          marginTop (px 30),
           textAlign center
      ]
 
@@ -334,4 +380,46 @@ mainSectionAdditionFB =
           position absolute,
           marginLeft (px 5),
           width (px 30)
+     ]
+
+osKeyboardBtnContainer =
+     [
+          textAlign center,
+          margin (px 25)
+     ]
+
+osKeyboardBtnInstruction =
+     [
+          fontSize (px 20),
+          margin auto
+     ]
+
+osKeyboardBtn = 
+     [
+          display inlineBlock,
+          padding (px 10),
+          fontSize (px 25),
+          color (rgb 255 255 255),
+          backgroundColor (rgb 112 152 249),
+          margin (px 5),
+          borderRadius (px 5),
+          cursor pointer
+     ]
+
+mainSectionInputContainer =
+     [
+          display inlineBlock,
+          width (px 200),
+          height (px 35),
+          borderRadius (px 10),
+          color (rgb 255 255 255),
+          cursor pointer
+     ]
+
+mainSectionQuestionText =
+     [
+          display inlineBlock,
+          height (px 35),
+          marginRight (px 10),
+          verticalAlign top
      ]
