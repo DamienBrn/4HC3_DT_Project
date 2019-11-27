@@ -2,6 +2,7 @@ module Multiplication exposing (..)
 
 import Browser
 import Css exposing (..)
+import Css.Media exposing (withMediaQuery)
 import Html
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, src)
@@ -154,8 +155,11 @@ view model =
           ],
           -- main addition section
           div [ css mainSectionStyle ] [
-               -- title
-               div [ css mainSectionTitleStyle ] [text "Type your answer into the box next to each multiplication"],
+               -- boy
+               div [] [
+                    img [src "assest/character.png", css character, css characterLargeWidth] [],
+                    div [css characterBubble, css characterBubbleLargeWidth] [text "Type your answer into the box next to each addition"]
+               ],
                -- addition part 1
                div [ css mainSectionAdditionContainerStyle ] [
                     div [ css mainSectionQuestionText ] [text "1 * 6 = "],
@@ -259,7 +263,7 @@ sectionSpliterTextContainerStyle =
 
 mainSectionStyle = 
      [
-          marginTop (px 25)
+          marginTop (px 200)
      ]
 
 mainSectionTitleStyle = 
@@ -397,8 +401,8 @@ osKeyboardBtnInstruction =
 osKeyboardBtn = 
      [
           display inlineBlock,
-          padding (px 10),
-          fontSize (px 25),
+          padding (px 15),
+          fontSize (px 30),
           color (rgb 255 255 255),
           backgroundColor (rgb 112 152 249),
           margin (px 5),
@@ -422,4 +426,33 @@ mainSectionQuestionText =
           height (px 35),
           marginRight (px 10),
           verticalAlign top
+     ]
+
+character = 
+     [
+          position absolute,
+          width (rem 12),
+          right (rem 5),
+          top (rem 15),
+          transform (rotateY (deg 180))
+     ]
+
+characterLargeWidth =
+     [ withMediaQuery ["screen and (min-width: 1500px)"]
+          [right (rem 18)]
+     ]
+
+characterBubble = 
+     [
+          position absolute,
+          top (rem 15),
+          right (rem 17),
+          padding (px 20),
+          backgroundColor (rgb 217 217 217),
+          fontSize (px 20)
+     ]
+
+characterBubbleLargeWidth =
+     [ withMediaQuery ["screen and (min-width: 1500px)"]
+          [right (rem 30), fontSize (px 25)]
      ]
