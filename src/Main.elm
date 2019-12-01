@@ -317,7 +317,7 @@ additionPageElements model =
                     -- boy
                     div [] [
                          img [src "assest/character.png", css AdditionCss.character, css AdditionCss.characterLargeWidth] [],
-                         div [css AdditionCss.characterBubble, css AdditionCss.characterBubbleLargeWidth] [text "Type your answer into the box next to each addition"]
+                         div [css AdditionCss.characterBubble, css AdditionCss.characterBubbleLargeWidth] [text "Select one of the purple boxes and use the keyboard to give your answer"]
                     ],
                     -- addition part 1
                     div [ css AdditionCss.mainSectionAdditionContainerStyle ] [
@@ -409,7 +409,7 @@ multiplicationPageElements model =
                     -- boy
                     div [] [
                          img [src "assest/character.png", css MultiplicationCss.character, css MultiplicationCss.characterLargeWidth] [],
-                         div [css MultiplicationCss.characterBubbleLargeWidth, css MultiplicationCss.characterBubble] [text "Type your answer into the box next to each multiplication"]
+                         div [css MultiplicationCss.characterBubbleLargeWidth, css MultiplicationCss.characterBubble] [text "Select one of the blue boxes and use the keyboard to give your answer"]
                     ],
                     -- addition part 1
                     div [ css MultiplicationCss.mainSectionAdditionContainerStyle ] [
