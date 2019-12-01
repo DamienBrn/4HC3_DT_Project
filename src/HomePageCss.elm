@@ -23,7 +23,7 @@ sectionSpliterStyle =
      [
           textAlign center,
           fontSize (px 30),
-          backgroundColor (rgb 112 152 249),
+          backgroundColor (rgb 252 154 43),
           padding (px 20),
           color (rgb 255 255 255)
      ]
