@@ -27,6 +27,8 @@ main =
 
 -- TYPE
 
+-- three types of page
+-- used to indicate which page currently in
 type Pages
     = Homepage
     | Addition
@@ -34,6 +36,16 @@ type Pages
 
 -- MODEL
 
+-- page: indicate which page currently in
+-- selectedAns: indicate which answ input is selected
+-- answ1: answer 1
+-- answ2: answer 2
+-- answ3: answer 3
+-- a1ValidatedCode: indicate the status for the answer 1
+-- a2ValidatedCode: indicate the status for the answer 2
+-- a3ValidatedCode: indicate the status for the answer 3
+-- key
+-- url
 type alias Model = 
     { page: Pages
     , selectedAnsw : Int
@@ -49,14 +61,22 @@ type alias Model =
 
 -- INIT
 
+-- follow Broswer.application with default inputs
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     ( Model Homepage 0 "" "" "" 0 0 0 key url, Cmd.none )
 
 -- UPDATE
 
+-- ModifyAnsw1: modify the answer1
+-- ModifyAnsw2: modify the answer2
+-- ModifyAnsw3: modify the answer3
+-- UpdateValidatedCode: modify the validted code for a1, a2 or a3
+-- UrlChanged: catch by Browser.application when url changed
+-- LinkClicked: catch by Broswer.application when link is clicked (ex. <a />)
+     -- check the url is redirected to and update the page value in model
 type Msg
-  = ModifyAnsw1 String
+  = ModifyAnsw1 String 
   | ModifyAnsw2 String
   | ModifyAnsw3 String
   | UpdateValidatedCode Int Int Int
@@ -137,8 +157,13 @@ subscriptions _ =
     Sub.none
 
 
--- Support Functions
+-- SUPPORT FUNCTIONS
 
+-- check if the answ 1 is correct or not
+-- result:
+--   1: correct
+--   2: incorrect
+--   0: haven't answered
 getA1ValidatedCode model =
     case model.page of
         Addition ->
@@ -158,6 +183,11 @@ getA1ValidatedCode model =
         _ ->
             0
 
+-- check if the answ 2 is correct or not
+-- result:
+--   1: correct
+--   2: incorrect
+--   0: haven't answered
 getA2ValidatedCode model =
     case model.page of
         Addition ->
@@ -177,6 +207,11 @@ getA2ValidatedCode model =
         _ ->
             0
 
+-- check if the answ 3 is correct or not
+-- result:
+--   1: correct
+--   2: incorrect
+--   0: haven't answered
 getA3ValidatedCode model =
     case model.page of
         Addition ->
@@ -196,6 +231,7 @@ getA3ValidatedCode model =
         _ ->
             0
 
+-- get validated code by calling above functions and fire 'UpdateValidateCode' to update the validated codes
 validateAnsws model =
      let
           a1ValidatedCode = getA1ValidatedCode model
@@ -204,6 +240,7 @@ validateAnsws model =
      in
           UpdateValidatedCode a1ValidatedCode a2ValidatedCode a3ValidatedCode
 
+-- get img address for indicating if the answer is correct or not 
 getValidateImg validator =
      if validator == 1 then
           "assest/success.png"
@@ -212,6 +249,7 @@ getValidateImg validator =
      else
           "assest/error.png"
 
+-- return css background-color for coloring the input according current page and if the input is selected
 isInputSelected inputNumb model =
     case model.page of
         Addition ->        
@@ -227,12 +265,16 @@ isInputSelected inputNumb model =
         _ ->
             [ backgroundColor (rgb 46 204 113) ]
 
+-- handle the input area input value
+-- if value is set as 'del' drop the first right character
 handleUpComingVal income existing =
      if income == "del" then
           String.dropRight 1 existing
      else
           existing ++ income
 
+-- update input value depends on which input area is selected
+-- get the updated value by using 'handleUpComingVal' and update the value to model accordingly
 inputSelectedVal val model = 
      if model.selectedAnsw == 1 then
           (handleUpComingVal val model.answ1) |> ModifyAnsw1
@@ -245,6 +287,9 @@ inputSelectedVal val model =
 
 -- VIEW
 
+-- handle element to unstyle
+-- required by lib 'rtfeldman/elm-css'
+-- 'toUnstyled' method is provided by the lib
 toUnstyledDocument doc =
     { title = doc.title
     , body = List.map toUnstyled doc.body
@@ -255,6 +300,8 @@ view model =
   , body = (getRenderElement model)
   }
 
+-- wrapped method
+-- render different page element according the 'page' value in model
 getRenderElement model =
     case model.page of 
         Addition ->
@@ -266,6 +313,7 @@ getRenderElement model =
 
 -- ELEMENTS
 
+-- inject 'model' and return home page elements
 homePageElements model = 
     [
         div [] [
@@ -298,6 +346,7 @@ homePageElements model =
         ]
     ]
 
+-- inject 'model' and return addition page elements
 additionPageElements model = 
      [
           div [] [
@@ -337,6 +386,7 @@ additionPageElements model =
                          div [ css AdditionCss.mainSectionInputContainer, (isInputSelected 3 model) |> css, onClick (UpdateSelectedInput 3) ] [ text model.answ3 ],
                          img [ css AdditionCss.mainSectionAdditionFB, getValidateImg model.a3ValidatedCode |> src ] []
                     ],
+                    -- on screen keyboard
                     div [ css AdditionCss.osKeyboardBtnContainer ] [
                          div [ css AdditionCss.osKeyboardBtnInstruction ] [ text "Input number by pressing buttons below"],
                          ul [] [
@@ -390,6 +440,7 @@ additionPageElements model =
           ]
      ]
 
+-- inject 'model' and return multiplication page elements
 multiplicationPageElements model = 
      [
           div [] [
@@ -429,6 +480,7 @@ multiplicationPageElements model =
                          div [ css MultiplicationCss.mainSectionInputContainer, (isInputSelected 3 model) |> css, onClick (UpdateSelectedInput 3) ] [ text model.answ3 ],
                          img [ css MultiplicationCss.mainSectionAdditionFB, getValidateImg model.a3ValidatedCode |> src ] []
                     ],
+                    -- on-screen keyboard
                     div [ css MultiplicationCss.osKeyboardBtnContainer ] [
                          div [ css MultiplicationCss.osKeyboardBtnInstruction ] [ text "Input number by pressing buttons below"],
                          ul [] [

@@ -6,6 +6,8 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, src)
 import Html.Styled.Events exposing (onClick, onInput)
 
+-- css file for addition page elements
+
 linkStyle = 
      [
           color (rgb 255 255 255)
